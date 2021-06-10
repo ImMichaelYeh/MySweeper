@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -26,7 +28,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Program extends Application implements Tile.TileListener {
+public class Program extends Application{
 
     private final String GAME_TITLE = "MySweeper";
 
@@ -34,13 +36,15 @@ public class Program extends Application implements Tile.TileListener {
     private Button faceButton;
     private Text timerText;
 
-    private final int HEIGHT = 16;
-    private final int WIDTH = 30;
-    private final int MINES = 99;
+   
     private final int CELLSIZE = 40;
     private final int FACEBUTTONSIZE = 50;
     private final int TOPBARHEIGHT = 100;
 
+    private final int HEIGHT = 16;
+    private final int WIDTH = 30;
+    private final int MINES = 99;
+    
     private final int STAGEWIDTH = CELLSIZE * WIDTH;
     private final int STAGEHEIGHT = CELLSIZE * HEIGHT + TOPBARHEIGHT;
 
@@ -66,23 +70,22 @@ public class Program extends Application implements Tile.TileListener {
 
 	flagsRemainingText = new Text("099");
 	faceButton = new Button();
+	faceButton.setOnMouseReleased(new FaceButtonReleasedListener());
 	timerText = new Text("000");
 
 	flagsPane.getChildren().add(flagsRemainingText);
 	flagsPane.setPrefWidth(STAGEWIDTH * 0.25);
-	flagsRemainingText.setFont(Font.font("impact", FontWeight.BOLD, FontPosture.REGULAR, 50));
+	flagsRemainingText.setFont(Font.font("Lucida Sans Typewriter", FontWeight.BOLD, FontPosture.REGULAR, 50));
 	flagsRemainingText.setFill(Color.RED);
 	flagsRemainingText.setStroke(Color.BLACK);
 	topBar.setMinHeight(TOPBARHEIGHT);
 
 	facePane.getChildren().add(faceButton);
-	FACESMILEY.setFitHeight(FACEBUTTONSIZE);
-	FACESMILEY.setFitWidth(FACEBUTTONSIZE);
-	faceButton.setGraphic(FACESMILEY);
+	setFaceToSmile();
 
 	timerPane.getChildren().add(timerText);
 	timerPane.setPrefWidth(STAGEWIDTH * 0.25);
-	timerText.setFont(Font.font("impact", FontWeight.BOLD, FontPosture.REGULAR, 50));
+	timerText.setFont(Font.font("Lucida Sans Typewriter", FontWeight.BOLD, FontPosture.REGULAR, 50));
 	timerText.setFill(Color.RED);
 	timerText.setStroke(Color.BLACK);
 
@@ -126,15 +129,27 @@ public class Program extends Application implements Tile.TileListener {
     }
 
     public void setFaceToSmile() {
+	FACESMILEY.setFitHeight(FACEBUTTONSIZE);
+	FACESMILEY.setFitWidth(FACEBUTTONSIZE);
+	faceButton.setGraphic(FACESMILEY);
     }
 
-    public void setFaceToSurprised() {
+    public void setFaceToShocked() {
+	FACESHOCKED.setFitHeight(FACEBUTTONSIZE);
+	FACESHOCKED.setFitWidth(FACEBUTTONSIZE);
+	faceButton.setGraphic(FACESHOCKED);
     }
 
     public void setFaceToSunglasses() {
+	FACESUNGLASSES.setFitHeight(FACEBUTTONSIZE);
+	FACESUNGLASSES.setFitWidth(FACEBUTTONSIZE);
+	faceButton.setGraphic(FACESUNGLASSES);
     }
 
     public void setFaceToDead() {
+	FACEDEAD.setFitHeight(FACEBUTTONSIZE);
+	FACEDEAD.setFitWidth(FACEBUTTONSIZE);
+	faceButton.setGraphic(FACEDEAD);
     }
 
     public void setTimerText(long seconds) {
@@ -148,11 +163,20 @@ public class Program extends Application implements Tile.TileListener {
     /**
      * faceButton action listener
      */
-    private class FaceButtonListener implements EventHandler<ActionEvent> {
+    private class FaceButtonReleasedListener implements EventHandler<MouseEvent> {
 	@Override
-	public void handle(ActionEvent event) {
-	    // TODO Auto-generated method stub
-
+	public void handle(MouseEvent event) {
+	    if (event.getButton() == MouseButton.PRIMARY){
+		
+	    }
 	}
+    }
+    
+    public int getMinesWidth(){
+	return this.WIDTH;
+    }
+    
+    public int getMinesHeight(){
+	return this.HEIGHT;
     }
 }
