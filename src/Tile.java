@@ -5,32 +5,45 @@ import javafx.scene.layout.StackPane;
 
 public class Tile extends StackPane{
 	
-	private static final Image[] NUMBER = { new Image("res/zero.png"), new Image("res/one.png"), new Image("res/two.png"), 
-											new Image("res/three.png"), new Image("res/four.png"), new Image("res/five.png"), 
-											new Image("res/six.png"), new Image("res/seven.png"), new Image("res/eight.png") };
-	private static final Image FLAG = new Image("res/flag.png");
-	private static final Image BADFLAG = new Image("res/flag.png");
+	private static final Image[] NUMBER = { 
+		Res.image("zero.png"), Res.image("one.png"), Res.image("two.png"), 
+		Res.image("three.png"), Res.image("four.png"), Res.image("five.png"), 
+		Res.image("six.png"), Res.image("seven.png"), Res.image("eight.png") 
+	};
 	
-	private static final Image MINE = new Image("res/mine.png");
-	private static final Image MINECLICKED = new Image("res/mineclicked.png");
+	private static final Image FLAG = Res.image("flag.png");
+	private static final Image BADFLAG = Res.image("flag.png");
 	
-	private static final Image BACKGROUND = new Image("res/background.png");
-	private static final Image BORDEREDBACKGROUND = new Image("res/borderedbackground.png");
+	private static final Image MINE = Res.image("mine.png");
+	private static final Image MINECLICKED = Res.image("mineclicked.png");
+	
+	private static final Image BACKGROUND = Res.image("background.png");
+	private static final Image BORDEREDBACKGROUND = Res.image("borderedbackground.png");
 	
 	
 	private TileListener player;
+	private Game gameInstance;
 	
 	private StackPane stackpane;
 	private Button tileButton;
 	private ImageView number;
 	private ImageView background;
+	
+	private boolean isClicked;
+	private boolean isEmpty;
+	private boolean isFlagged;
 
 	public Tile(TileListener player) {
 		this.player = player;
+		gameInstance = player.getGameInstance();
 		stackpane = new StackPane();
 		tileButton = new Button();
 		number = new ImageView(NUMBER[0]);
 		background = new ImageView(BACKGROUND);
+		isClicked = false;
+		isEmpty = true;
+		
+		setSize(10);
 		
 		stackpane.getChildren().add(background);
 		stackpane.getChildren().add(number);
@@ -45,6 +58,34 @@ public class Tile extends StackPane{
 		}
 	}
 	
+	public void setTileNumber(int number) {
+		if (number == 0) {
+			isEmpty = true;
+		}
+		
+		if (number >= 0 || number <= 8) {
+			this.number = new ImageView(NUMBER[number]);
+		}
+	}
+	
+	public void click() {
+		if (!isClicked) {
+			this.isClicked = true;
+			
+			// If the tile is flagged, it can not be clicked or cleared by other tiles
+			if (!isFlagged) {
+				if (isEmpty) clearSurrounding();
+				
+				// TODO: What happens when the tile is clicked 
+			}
+		}
+	}
+	
+	// invoke click of all surrounding tiles
+	private void clearSurrounding() {
+		
+	}
+	
 	public void setSize(int width) {
 		stackpane.setMaxSize(width, width);
 		tileButton.setMaxSize(width, width);
@@ -53,7 +94,8 @@ public class Tile extends StackPane{
 	}
 	
 	public interface TileListener{
-		public void setFaceToSmile();
+		public Game getGameInstance();
+		public void setFaceToSmiley();
 		public void setFaceToSurprised();
 		public void setFaceToSunglasses();
 		public void setFaceToDead();
