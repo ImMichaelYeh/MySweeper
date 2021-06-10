@@ -114,7 +114,7 @@ public class Program extends Application implements Tile.TileListener {
 	primaryStage.setTitle(GAME_TITLE);
 	primaryStage.setScene(primaryScene);
 	primaryStage.show();
-	// FIX RESIZING ISSUES
+
     }
 
     public static void main(String[] args) {
