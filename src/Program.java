@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -21,7 +22,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Program extends Application{
+public class Program extends Application {
 
     private final String GAME_TITLE = "MySweeper";
 
@@ -29,7 +30,6 @@ public class Program extends Application{
     private Button faceButton;
     private Text timerText;
 
-   
     private final int CELLSIZE = 40;
     private final int FACEBUTTONSIZE = 50;
     private final int TOPBARHEIGHT = 100;
@@ -37,7 +37,7 @@ public class Program extends Application{
     private final int HEIGHT = 16;
     private final int WIDTH = 30;
     private final int MINES = 99;
-    
+
     private final int STAGEWIDTH = CELLSIZE * WIDTH;
     private final int STAGEHEIGHT = CELLSIZE * HEIGHT + TOPBARHEIGHT;
 
@@ -45,16 +45,21 @@ public class Program extends Application{
     private final ImageView FACESHOCKED = new ImageView("res/shocked.png");
     private final ImageView FACESUNGLASSES = new ImageView("res/sunglasses.png");
     private final ImageView FACEDEAD = new ImageView("res/dead.png");
+    
+    private final VBox ROOTLAYOUT = new VBox();
+    private final BorderPane TOPBAR = new BorderPane();
+    private final GridPane MINEFIELD = new GridPane();
+    
+    private Game game;
+
+    public static void main(String[] args) {
+	launch(args); // internally calls start()
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-	Game game = new Game(this, HEIGHT, WIDTH, MINES);
-
 	// Prepare scene graph with required nodes
-	VBox rootLayout = new VBox();
-	BorderPane topBar = new BorderPane();
 	StackPane flagsPane = new StackPane(), facePane = new StackPane(), timerPane = new StackPane();
-	GridPane minefield = new GridPane();
 
 	/** START TOP BAR **/
 	BackgroundFill topBarBackgroundFill = new BackgroundFill(Color.rgb(222, 222, 222), CornerRadii.EMPTY,
@@ -63,7 +68,7 @@ public class Program extends Application{
 
 	flagsRemainingText = new Text("099");
 	faceButton = new Button();
-	faceButton.setOnMouseReleased(new FaceButtonReleasedListener());
+	faceButton.setOnMousePressed(new FaceButtonPressedListener(this));
 	timerText = new Text("000");
 
 	flagsPane.getChildren().add(flagsRemainingText);
@@ -71,7 +76,7 @@ public class Program extends Application{
 	flagsRemainingText.setFont(Font.font("Lucida Sans Typewriter", FontWeight.BOLD, FontPosture.REGULAR, 50));
 	flagsRemainingText.setFill(Color.RED);
 	flagsRemainingText.setStroke(Color.BLACK);
-	topBar.setMinHeight(TOPBARHEIGHT);
+	TOPBAR.setMinHeight(TOPBARHEIGHT);
 
 	facePane.getChildren().add(faceButton);
 	setFaceToSmile();
@@ -82,41 +87,55 @@ public class Program extends Application{
 	timerText.setFill(Color.RED);
 	timerText.setStroke(Color.BLACK);
 
-	topBar.setLeft(flagsPane);
-	topBar.setCenter(facePane);
-	topBar.setRight(timerPane);
-	rootLayout.getChildren().add(topBar);
-	topBar.setBackground(topBarBackground);
+	TOPBAR.setLeft(flagsPane);
+	TOPBAR.setCenter(facePane);
+	TOPBAR.setRight(timerPane);
+	ROOTLAYOUT.getChildren().add(TOPBAR);
+	TOPBAR.setBackground(topBarBackground);
 	/** END TOP BAR **/
-
-	/** START MINEFIELD **/
-	Tile[][] board = game.getBoard();
-	rootLayout.getChildren().add(minefield);
-	for (int row = 0; row < HEIGHT; row++) {
-	    for (int col = 0; col < WIDTH; col++) {
-		Node tile = board[row][col].getStackPane();
-		// minefield.setMargin(tile, new Insets(0.5,0.5,0.5,0.5));
-		minefield.add(tile, col, row); // for some reason, grid pane uses (col, row) for coordinates instead of
-					       // (row, col)
-	    }
-	}
-	/** END MINEFIELD **/
+	
+	ROOTLAYOUT.getChildren().add(MINEFIELD);
+	
+	newGame();
 
 	/*
 	 * Prepare a scene w/ required dimensions and add the scene graph (root node of
 	 * the scene) to it
 	 */
-	Scene primaryScene = new Scene(rootLayout, STAGEWIDTH, STAGEHEIGHT);
+	Scene primaryScene = new Scene(ROOTLAYOUT, STAGEWIDTH, STAGEHEIGHT);
 	primaryStage.setTitle(GAME_TITLE);
+	primaryStage.getIcons().add(new Image("res/mine.png"));
 	primaryStage.setScene(primaryScene);
 	primaryStage.show();
 	// FIX RESIZING ISSUES
     }
 
-    public static void main(String[] args) {
-	launch(args); // internally calls start()
+    public void updateFlagCounter(){
+	flagsRemainingText.setText(game.getFlagsRemaining());
     }
-
+    
+    private void newGame(){
+	if (game != null) {
+	    game.setIsGameOver(true);
+	}
+	game = new Game(this, HEIGHT, WIDTH, MINES);
+	MINEFIELD.getChildren().clear();
+	flagsRemainingText.setText(game.getFlagsRemaining());
+	timerText.setText("000");
+	
+	/** START MINEFIELD **/
+	Tile[][] board = game.getBoard();
+	
+	for (int row = 1; row <= HEIGHT; row++) {
+	    for (int col = 1; col <= WIDTH; col++) {
+		Node tile = board[row][col].getStackPane();
+		MINEFIELD.add(tile, col, row); // for some reason, grid pane uses (col, row) for coordinates instead of
+					       // (row, col)
+	    }
+	}
+	/** END MINEFIELD **/
+    }
+    
     public int getCellSize() {
 	return CELLSIZE;
     }
@@ -156,20 +175,33 @@ public class Program extends Application{
     /**
      * faceButton action listener
      */
-    private class FaceButtonReleasedListener implements EventHandler<MouseEvent> {
+    private class FaceButtonPressedListener implements EventHandler<MouseEvent> {
+	
+	private Program programInstance;
+	
+	public FaceButtonPressedListener(Program programInstance){
+	    this.programInstance = programInstance;
+	}
+	
 	@Override
 	public void handle(MouseEvent event) {
-	    if (event.getButton() == MouseButton.PRIMARY){
-		
+	    if (event.getButton() == MouseButton.PRIMARY) {
+		System.out.println("NEW GAME");
+		newGame();
+		programInstance.setFaceToSmile();
 	    }
 	}
     }
-    
-    public int getMinesWidth(){
+
+    public int getMinesWidth() {
 	return this.WIDTH;
     }
-    
-    public int getMinesHeight(){
+
+    public int getMinesHeight() {
 	return this.HEIGHT;
+    }
+    
+    public int getNumberMines(){
+	return MINES;
     }
 }
