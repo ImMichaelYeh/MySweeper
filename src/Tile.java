@@ -71,29 +71,31 @@ public class Tile extends StackPane {
      * Performs all action after a click
      */
     private void click() {
-	tileButton.setVisible(false);
-	setIsRevealed(true);
+	if (!gameInstance.getIsGameOver()) {
+	    tileButton.setVisible(false);
+	    setIsRevealed(true);
 
-	if (!getIsMine()) {
-	    if (numberMinesSurrounding == 0) {
-		for (Tile t : getSurroundingTiles()) {
-		    if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed())
-			t.click();
+	    if (!getIsMine()) {
+		if (numberMinesSurrounding == 0) {
+		    for (Tile t : getSurroundingTiles()) {
+			if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed())
+			    t.click();
+		    }
 		}
+
+		gameInstance.subtractSafeCell();
+
+		if (gameInstance.getNumberSafeCellsRemaining() <= 0) {
+		    gameInstance.gameOver(true);
+		}
+
+	    } else {
+		gameInstance.gameOver(false);
+		this.middle = new ImageView(MINECLICKED);
+		middle.setFitHeight(programInstance.getCellSize() * .75);
+		middle.setFitWidth(programInstance.getCellSize() * .75);
+		stackPane.getChildren().set(1, middle);
 	    }
-
-	    gameInstance.subtractSafeCell();
-
-	    if (gameInstance.getNumberSafeCellsRemaining() <= 0) {
-		gameInstance.gameOver(true);
-	    }
-
-	} else {
-	    gameInstance.gameOver(false);
-	    this.middle = new ImageView(MINECLICKED);
-	    middle.setFitHeight(programInstance.getCellSize() * .75);
-	    middle.setFitWidth(programInstance.getCellSize() * .75);
-	    stackPane.getChildren().set(1, middle);
 	}
     }
 
@@ -124,7 +126,7 @@ public class Tile extends StackPane {
     public boolean getIsRevealed() {
 	return this.isRevealed;
     }
-    
+
     public void setIsMine(boolean bool) {
 	this.isMine = bool;
     }
@@ -154,7 +156,7 @@ public class Tile extends StackPane {
 	middle.setFitWidth(programInstance.getCellSize() * .75);
 	stackPane.getChildren().set(1, middle);
     }
-    
+
     public void setMiddleBadFlag() {
 	middle = new ImageView(BADFLAG);
 	middle.setFitHeight(programInstance.getCellSize() * .75);
@@ -163,7 +165,8 @@ public class Tile extends StackPane {
     }
 
     public Tile[] getSurroundingTiles() {
-	// top-left, top, top-right, left, current, right, bottom-left, bottom, bottom-right
+	// top-left, top, top-right, left, current, right, bottom-left, bottom,
+	// bottom-right
 	Tile[] surroundingTiles = new Tile[9];
 	int index = 0;
 	int startRow = this.row - 1;
@@ -197,7 +200,7 @@ public class Tile extends StackPane {
 
 	@Override
 	public void handle(MouseEvent event) {
-	    if (event.getButton() == MouseButton.PRIMARY) {
+	    if (event.getButton() == MouseButton.PRIMARY && !gameInstance.getIsGameOver()) {
 		setFaceToShocked();
 	    }
 	    // RIGHT CLICK (Setting flags)
@@ -260,20 +263,14 @@ public class Tile extends StackPane {
 		}
 	    }
 
-	    /** DEBUGGING (Reveal all bombs)
-	    
-	    if (event.getButton() == MouseButton.MIDDLE) {
-		int mines = 0;
-		Tile[][] board = gameInstance.getBoard();
-		for (int row = 1; row <= programInstance.getMinesHeight(); row++) {
-		    for (int col = 1; col <= programInstance.getMinesWidth(); col++) {
-			if (board[row][col].getIsMine()) {
-			    mines++;
-			    board[row][col].getTileButton().setVisible(false);
-			}
-		    }
-		}
-	    }
+	    /**
+	     * DEBUGGING (Reveal all bombs)
+	     * 
+	     * if (event.getButton() == MouseButton.MIDDLE) { int mines = 0; Tile[][] board
+	     * = gameInstance.getBoard(); for (int row = 1; row <=
+	     * programInstance.getMinesHeight(); row++) { for (int col = 1; col <=
+	     * programInstance.getMinesWidth(); col++) { if (board[row][col].getIsMine()) {
+	     * mines++; board[row][col].getTileButton().setVisible(false); } } } }
 	     */
 	}
 
