@@ -27,6 +27,8 @@ public class Tile extends StackPane {
     private Button tileButton; // Possible images: FLAG
     private ImageView middle; // Possible images: NUMBER, BADFLAG, MINE, MINECLICKED
     private ImageView background; // Possible images: BORDEREDBACKGROUND
+    
+    private static boolean REVEALALLMINES = false; // for debugging purposes
 
     public Tile(Program programInstance, Game gameInstance, int row, int col) {
 	this.programInstance = programInstance;
@@ -205,7 +207,7 @@ public class Tile extends StackPane {
 	    }
 	    // RIGHT CLICK (Setting flags)
 	    if (event.getButton() == MouseButton.SECONDARY) {
-		if (!isFlagged) {
+		if (!isFlagged && !gameInstance.getIsGameOver()) {
 		    if (gameInstance.getNumberFlagsRemaining() > 0) {
 			isFlagged = true;
 			ImageView flag = new ImageView(FLAG);
@@ -215,7 +217,7 @@ public class Tile extends StackPane {
 			gameInstance.subtractFlag();
 			programInstance.updateFlagCounter();
 		    }
-		} else {
+		} else if (!gameInstance.getIsGameOver()) {
 		    isFlagged = false;
 		    parentTile.getTileButton().setGraphic(null);
 		    gameInstance.addFlag();
@@ -265,13 +267,24 @@ public class Tile extends StackPane {
 
 	    /**
 	     * DEBUGGING (Reveal all bombs)
-	     * 
-	     * if (event.getButton() == MouseButton.MIDDLE) { int mines = 0; Tile[][] board
-	     * = gameInstance.getBoard(); for (int row = 1; row <=
-	     * programInstance.getMinesHeight(); row++) { for (int col = 1; col <=
-	     * programInstance.getMinesWidth(); col++) { if (board[row][col].getIsMine()) {
-	     * mines++; board[row][col].getTileButton().setVisible(false); } } } }
 	     */
+	    if (REVEALALLMINES && event.getButton() == MouseButton.MIDDLE ) {
+
+		Tile[][] board = gameInstance.getBoard();
+		for (int row = 1; row <= programInstance.getMinesHeight(); row++) {
+		    for (int col = 1; col <= programInstance.getMinesWidth(); col++) {
+			if (board[row][col].getIsMine()) {
+			    if (board[row][col].getTileButton().isVisible()){
+				board[row][col].getTileButton().setVisible(false);
+			    }
+			    else{
+				board[row][col].getTileButton().setVisible(true);
+			    }
+			}
+		    }
+		}
+	    }
+
 	}
 
 	public void setFaceToSmile() {

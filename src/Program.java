@@ -24,11 +24,7 @@ import javafx.stage.Stage;
 
 public class Program extends Application {
 
-    private final String GAME_TITLE = "MySweeper";
-
-    private Text flagsRemainingText;
-    private Button faceButton;
-    private Text timerText;
+    private final String GAMETITLE = "MySweeper";
 
     private final int CELLSIZE = 40;
     private final int FACEBUTTONSIZE = 50;
@@ -52,6 +48,10 @@ public class Program extends Application {
     
     private Game game;
 
+    private Text flagsRemainingText;
+    private Button faceButton;
+    private Text timerText;
+    
     public static void main(String[] args) {
 	launch(args); // internally calls start()
     }
@@ -103,7 +103,7 @@ public class Program extends Application {
 	 * the scene) to it
 	 */
 	Scene primaryScene = new Scene(ROOTLAYOUT, STAGEWIDTH, STAGEHEIGHT);
-	primaryStage.setTitle(GAME_TITLE);
+	primaryStage.setTitle(GAMETITLE);
 	primaryStage.getIcons().add(new Image("res/mine.png"));
 	primaryStage.setScene(primaryScene);
 	primaryStage.show();
@@ -118,6 +118,7 @@ public class Program extends Application {
 	if (game != null) {
 	    game.setIsGameOver(true);
 	}
+	
 	game = new Game(this, HEIGHT, WIDTH, MINES);
 	MINEFIELD.getChildren().clear();
 	flagsRemainingText.setText(game.getFlagsRemaining());
@@ -186,7 +187,6 @@ public class Program extends Application {
 	@Override
 	public void handle(MouseEvent event) {
 	    if (event.getButton() == MouseButton.PRIMARY) {
-		System.out.println("NEW GAME");
 		newGame();
 		programInstance.setFaceToSmile();
 	    }

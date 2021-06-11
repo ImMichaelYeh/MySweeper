@@ -103,7 +103,7 @@ public class Game {
 	    programInstance.setFaceToDead();
 	    for (int row = 1; row <= height; row++) {
 		for (int col = 1; col <= width; col++) {
-		    if (board[row][col].getIsMine()) {
+		    if (board[row][col].getIsMine() && !board[row][col].getIsFlagged()) {
 			board[row][col].getTileButton().setVisible(false);
 		    }
 		    if (!board[row][col].getIsMine() && board[row][col].getIsFlagged()) {
