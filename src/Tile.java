@@ -22,6 +22,7 @@ public class Tile extends StackPane {
     private boolean isFlagged;
     private boolean isMine;
     private boolean isRevealed;
+    private boolean isStartingTile;
 
     private StackPane stackPane;
     private Button tileButton; // Possible images: FLAG
@@ -39,6 +40,7 @@ public class Tile extends StackPane {
 	isFlagged = false;
 	isMine = false;
 	isRevealed = false;
+	isStartingTile = false;
 
 	stackPane = new StackPane();
 	tileButton = new Button();
@@ -135,6 +137,14 @@ public class Tile extends StackPane {
 
     public void setIsRevealed(Boolean bool) {
 	this.isRevealed = bool;
+    }
+    
+    public void setIsStartingTile(Boolean bool){
+	this.isStartingTile = bool;
+    }
+    
+    public boolean getIsStartingTile(){
+	return this.isStartingTile;
     }
 
     /**

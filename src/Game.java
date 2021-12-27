@@ -41,35 +41,38 @@ public class Game {
 	    }
 	}
 
-	this.timerThread = new TimerThread(programInstance, this);
+	this.timerThread = new TimerThread(programInstance);
     }
 
     /**
      * This function gets called after the first cell is clicked.
      */
     public void startGame(Tile startTile) {
-	Tile[] surroundingTiles = startTile.getSurroundingTiles();
+	// These tile will be empty since they are around the starting tiles
+	Tile[] startingTiles = startTile.getSurroundingTiles();
+	for (Tile tile : startingTiles) {
+	    tile.setIsStartingTile(true);
+	}
 
 	/**
 	 * Places mines all over the board except for cells adjacent to the startTile
 	 **/
 	Random rand = new Random(System.currentTimeMillis());
-	for (int mines = 0; mines < programInstance.getNumberMines(); mines += 0) {
-	    int randomRow = rand.nextInt(programInstance.getMinesHeight()) + 1;
-	    int randomCol = rand.nextInt(programInstance.getMinesWidth()) + 1;
+	for (int mines = 0; mines < programInstance.getNumberMines(); mines++) {
 
-	    Tile randomTile = board[randomRow][randomCol];
+	    // Select a random tile
+	    int randomRow; 
+	    int randomCol;
+	    Tile randomTile;
+	    
+	    do{
+		randomRow = rand.nextInt(programInstance.getMinesHeight()) + 1;
+		randomCol = rand.nextInt(programInstance.getMinesWidth()) + 1;
+		randomTile = board[randomRow][randomCol];
+	    }
+	    while (randomTile.getIsMine() || randomTile.getIsStartingTile());
 
-	    boolean match = false;
-	    for (Tile t : surroundingTiles) {
-		if (t.equals(randomTile)) {
-		    match = true;
-		}
-	    }
-	    if (!match && !randomTile.getIsMine()) {
-		mines++;
-		randomTile.setIsMine(true);
-	    }
+	    randomTile.setIsMine(true);
 	}
 
 	/**
@@ -83,7 +86,7 @@ public class Game {
 	}
 
 	isGameStarted = true;
-	timerThread = new TimerThread(programInstance, this);
+	timerThread = new TimerThread(programInstance);
 	timerThread.start();
     }
 
@@ -101,6 +104,8 @@ public class Game {
 	    }
 	} else {
 	    programInstance.setFaceToDead();
+
+	    // reveal the entire board
 	    for (int row = 1; row <= height; row++) {
 		for (int col = 1; col <= width; col++) {
 		    if (board[row][col].getIsMine() && !board[row][col].getIsFlagged()) {
@@ -160,14 +165,14 @@ public class Game {
     }
 
     /**
-     * CAREFUL: This function doesn't check for over flagging Check elsewhere
+     * CAREFUL: This function doesn't check for over flagging. Check elsewhere
      */
     public void subtractFlag() {
 	this.flagsRemaining--;
     }
 
     /**
-     * CAREFUL: This function doesn't check for over flagging Check elsewhere
+     * CAREFUL: This function doesn't check for over flagging. Check elsewhere
      */
     public void subtractSafeCell() {
 	this.safeCellsRemaining--;
@@ -175,11 +180,9 @@ public class Game {
 
     private class TimerThread extends Thread {
 	private Program programInstance;
-	private Game gameInstance;
 
-	public TimerThread(Program programInstance, Game gameInstance) {
+	public TimerThread(Program programInstance) {
 	    this.programInstance = programInstance;
-	    this.gameInstance = gameInstance;
 	}
 
 	public void run() {
