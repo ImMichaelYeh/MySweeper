@@ -8,7 +8,8 @@ import javafx.scene.layout.StackPane;
 public class Tile extends StackPane {
 
     private static final String NUMBERS[] = { "res/zero.png", "res/one.png", "res/two.png", "res/three.png",
-	    "res/four.png", "res/five.png", "res/six.png", "res/seven.png", "res/eight.png" };
+	    					"res/four.png", "res/five.png", "res/six.png", "res/seven.png", 
+	    					"res/eight.png" };
     private static final String FLAG = "res/flag.png";
     private static final String BADFLAG = "res/badflag.png";
     private static final String MINE = "res/mine.png";
@@ -28,7 +29,7 @@ public class Tile extends StackPane {
     private Button tileButton; // Possible images: FLAG
     private ImageView middle; // Possible images: NUMBER, BADFLAG, MINE, MINECLICKED
     private ImageView background; // Possible images: BORDEREDBACKGROUND
-    
+
     private static boolean REVEALALLMINES = false; // for debugging purposes
 
     public Tile(Program programInstance, Game gameInstance, int row, int col) {
@@ -138,12 +139,12 @@ public class Tile extends StackPane {
     public void setIsRevealed(Boolean bool) {
 	this.isRevealed = bool;
     }
-    
-    public void setIsStartingTile(Boolean bool){
+
+    public void setIsStartingTile(Boolean bool) {
 	this.isStartingTile = bool;
     }
-    
-    public boolean getIsStartingTile(){
+
+    public boolean getIsStartingTile() {
 	return this.isStartingTile;
     }
 
@@ -278,16 +279,15 @@ public class Tile extends StackPane {
 	    /**
 	     * DEBUGGING (Reveal all bombs)
 	     */
-	    if (REVEALALLMINES && event.getButton() == MouseButton.MIDDLE ) {
+	    if (REVEALALLMINES && event.getButton() == MouseButton.MIDDLE) {
 
 		Tile[][] board = gameInstance.getBoard();
-		for (int row = 1; row <= programInstance.getMinesHeight(); row++) {
-		    for (int col = 1; col <= programInstance.getMinesWidth(); col++) {
+		for (int row = 1; row <= programInstance.getMinefieldHeight(); row++) {
+		    for (int col = 1; col <= programInstance.getMinefieldWidth(); col++) {
 			if (board[row][col].getIsMine()) {
-			    if (board[row][col].getTileButton().isVisible()){
+			    if (board[row][col].getTileButton().isVisible()) {
 				board[row][col].getTileButton().setVisible(false);
-			    }
-			    else{
+			    } else {
 				board[row][col].getTileButton().setVisible(true);
 			    }
 			}

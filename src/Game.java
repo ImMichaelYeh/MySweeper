@@ -17,26 +17,26 @@ public class Game {
      * 
      * BOMBS WILL NOT SPAWN IN THE PADDING
      */
-    private int height, width;
+    private int minefieldHeight, minefieldWidth;
 
     private Tile[][] board;
 
     private TimerThread timerThread;
 
-    public Game(Program programInstance, int height, int width, int mines) {
+    public Game(Program programInstance, int minefieldHeight, int minefieldWidth, int mines) {
 
 	this.programInstance = programInstance;
 	this.flagsRemaining = mines;
 	this.isGameStarted = false;
 	this.isGameOver = false;
-	this.safeCellsRemaining = height * width - mines;
+	this.safeCellsRemaining = minefieldHeight * minefieldWidth - mines;
 
-	this.height = height;
-	this.width = width;
+	this.minefieldHeight = minefieldHeight;
+	this.minefieldWidth = minefieldWidth;
 
-	this.board = new Tile[this.height + 2][this.width + 2];
-	for (int row = 1; row <= this.height; row++) {
-	    for (int col = 1; col <= this.width; col++) {
+	this.board = new Tile[this.minefieldHeight + 2][this.minefieldWidth + 2];
+	for (int row = 1; row <= this.minefieldHeight; row++) {
+	    for (int col = 1; col <= this.minefieldWidth; col++) {
 		board[row][col] = new Tile(programInstance, this, row, col);
 	    }
 	}
@@ -51,7 +51,8 @@ public class Game {
 	// These tile will be empty since they are around the starting tiles
 	Tile[] startingTiles = startTile.getSurroundingTiles();
 	for (Tile tile : startingTiles) {
-	    tile.setIsStartingTile(true);
+	    if (tile != null)
+		tile.setIsStartingTile(true);
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class Game {
 	    Tile randomTile;
 	    
 	    do{
-		randomRow = rand.nextInt(programInstance.getMinesHeight()) + 1;
-		randomCol = rand.nextInt(programInstance.getMinesWidth()) + 1;
+		randomRow = rand.nextInt(programInstance.getMinefieldHeight()) + 1;
+		randomCol = rand.nextInt(programInstance.getMinefieldWidth()) + 1;
 		randomTile = board[randomRow][randomCol];
 	    }
 	    while (randomTile.getIsMine() || randomTile.getIsStartingTile());
@@ -79,8 +80,8 @@ public class Game {
 	 * At this point, all the mine locations are determined so we need to set each
 	 * tile's middle layer
 	 **/
-	for (int row = 1; row <= height; row++) {
-	    for (int col = 1; col <= width; col++) {
+	for (int row = 1; row <= minefieldHeight; row++) {
+	    for (int col = 1; col <= minefieldWidth; col++) {
 		board[row][col].setMiddle();
 	    }
 	}
@@ -95,8 +96,8 @@ public class Game {
 
 	if (win) {
 	    programInstance.setFaceToSunglasses();
-	    for (int row = 1; row <= height; row++) {
-		for (int col = 1; col <= width; col++) {
+	    for (int row = 1; row <= minefieldHeight; row++) {
+		for (int col = 1; col <= minefieldWidth; col++) {
 		    if (board[row][col].getIsMine()) {
 			board[row][col].getTileButton().setVisible(true);
 		    }
@@ -106,8 +107,8 @@ public class Game {
 	    programInstance.setFaceToDead();
 
 	    // reveal the entire board
-	    for (int row = 1; row <= height; row++) {
-		for (int col = 1; col <= width; col++) {
+	    for (int row = 1; row <= minefieldHeight; row++) {
+		for (int col = 1; col <= minefieldWidth; col++) {
 		    if (board[row][col].getIsMine() && !board[row][col].getIsFlagged()) {
 			board[row][col].getTileButton().setVisible(false);
 		    }
