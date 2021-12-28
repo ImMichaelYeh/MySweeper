@@ -146,6 +146,7 @@ public class Program extends Application {
 	primaryStage.getIcons().add(new Image("res/mine.png"));
 	primaryStage.setScene(primaryScene);
 	primaryStage.show();
+	primaryStage.setResizable(false);
 	//TODO: FIX RESIZING ISSUE: User should not be able to resize window.
 	// But locking window size breaks display for some reason (Probably a JavaFX issue).
     }
