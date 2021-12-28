@@ -114,6 +114,7 @@ public class Program extends Application {
 	flagsRemainingText.setFont(Font.font("Lucida Sans Typewriter", FontWeight.BOLD, FontPosture.REGULAR, 50));
 	flagsRemainingText.setFill(Color.RED);
 	flagsRemainingText.setStroke(Color.BLACK);
+	flagsPane.setMargin(flagsRemainingText, new Insets(0, 0, 0, 32));
 	TOPBAR.setMinHeight(TOPBARHEIGHT);
 
 	facePane.getChildren().add(faceButton);
@@ -124,7 +125,8 @@ public class Program extends Application {
 	timerText.setFont(Font.font("Lucida Sans Typewriter", FontWeight.BOLD, FontPosture.REGULAR, 50));
 	timerText.setFill(Color.RED);
 	timerText.setStroke(Color.BLACK);
-
+	timerPane.setMargin(timerText, new Insets(0, 32, 0, 0));
+	
 	TOPBAR.setLeft(flagsPane);
 	TOPBAR.setCenter(facePane);
 	TOPBAR.setRight(timerPane);
