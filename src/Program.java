@@ -151,6 +151,8 @@ public class Program extends Application {
     }
     
     private void setStageSize(Stage stage){
+	
+	// The factors 0.4 and 1.6 seems to be a weird quirk with javaFX. Not sure how to fix it yet.
 	stage.setWidth(CELLSIZE * getMinefieldWidth() + CELLSIZE * 0.4);
 	stage.setHeight(CELLSIZE * getMinefieldHeight() + TOPBARHEIGHT + CELLSIZE * 1.6);
     }
