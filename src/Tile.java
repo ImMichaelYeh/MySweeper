@@ -7,9 +7,11 @@ import javafx.scene.layout.StackPane;
 
 public class Tile extends StackPane {
 
-    private static final String NUMBERS[] = { "res/zero.png", "res/one.png", "res/two.png", "res/three.png",
-	    					"res/four.png", "res/five.png", "res/six.png", "res/seven.png", 
-	    					"res/eight.png" };
+    private static final String NUMBERS[] = { 
+	    "res/zero.png", "res/one.png", "res/two.png", 
+	    "res/three.png", "res/four.png", "res/five.png", 
+	    "res/six.png", "res/seven.png", "res/eight.png" };
+    
     private static final String FLAG = "res/flag.png";
     private static final String BADFLAG = "res/badflag.png";
     private static final String MINE = "res/mine.png";
@@ -37,6 +39,7 @@ public class Tile extends StackPane {
 	this.gameInstance = gameInstance;
 	this.row = row;
 	this.col = col;
+	
 	numberMinesSurrounding = 0;
 	isFlagged = false;
 	isMine = false;
@@ -83,8 +86,9 @@ public class Tile extends StackPane {
 	    if (!getIsMine()) {
 		if (numberMinesSurrounding == 0) {
 		    for (Tile t : getSurroundingTiles()) {
-			if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed())
+			if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed()) {
 			    t.click();
+			}
 		    }
 		}
 

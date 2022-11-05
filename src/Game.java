@@ -56,8 +56,9 @@ public class Game {
 	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
 	for (Tile tile : startingTiles) {
-	    if (tile != null)
+	    if (tile != null) {
 		tile.setIsStartingTile(true);
+	    }
 	}
 
 
@@ -141,6 +142,7 @@ public class Game {
 		    if (board[row][col].getIsMine() && !board[row][col].getIsFlagged()) {
 			board[row][col].getTileButton().setVisible(false);
 		    }
+		    
 		    if (!board[row][col].getIsMine() && board[row][col].getIsFlagged()) {
 			board[row][col].setMiddleBadFlag();
 			board[row][col].getTileButton().setVisible(false);
@@ -165,8 +167,9 @@ public class Game {
 
     public String getFlagsRemaining() {
 	String remaining = Integer.toString(flagsRemaining);
-	while (remaining.length() < 3)
+	while (remaining.length() < 3) {
 	    remaining = "0" + remaining;
+	}
 	return remaining;
     }
 
@@ -222,8 +225,10 @@ public class Game {
 	    while (!getIsGameOver()) {
 		deltaTime = System.currentTimeMillis() - startTime;
 		deltaTimeSeconds = deltaTime / 1000;
-		if (deltaTimeSeconds <= 999) // max time to prevent formatting issues
+		
+		if (deltaTimeSeconds <= 999) {// max time to prevent formatting issues
 		    programInstance.setTimerText(deltaTimeSeconds);
+		}
 	    }
 	}
     }
