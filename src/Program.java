@@ -94,10 +94,12 @@ public class Program extends Application {
 	ROOTLAYOUT.getChildren().add(menuBar);
 	/** END TOP MENU **/
 	
+	
 	// Prepare scene graph with required nodes
 	StackPane flagsPane = new StackPane();
 	StackPane facePane = new StackPane();
 	StackPane timerPane = new StackPane();
+	
 
 	/** START TOP BAR **/
 	BackgroundFill topBarBackgroundFill = new BackgroundFill(Color.rgb(222, 222, 222), CornerRadii.EMPTY,
@@ -133,10 +135,12 @@ public class Program extends Application {
 	TOPBAR.setBackground(topBarBackground);
 	ROOTLAYOUT.getChildren().add(TOPBAR);
 	/** END TOP BAR **/
+	
 
 	ROOTLAYOUT.getChildren().add(MINEFIELD);
 
 	newGame();
+	
 
 	/*
 	 * Prepare a scene w/ required dimensions and add the scene graph (root node of
@@ -149,15 +153,13 @@ public class Program extends Application {
 	primaryStage.setScene(primaryScene);
 	primaryStage.show();
 	primaryStage.setResizable(false);
-	//TODO: FIX RESIZING ISSUE: User should not be able to resize window.
-	// But locking window size breaks display for some reason (Probably a JavaFX issue).
     }
     
     private void setStageSize(Stage stage){
 	
-	// The factors 0.4 and 1.6 seems to be a weird quirk with javaFX. Not sure how to fix it yet.
-	stage.setWidth(CELLSIZE * getMinefieldWidth() + CELLSIZE * 0.4);
-	stage.setHeight(CELLSIZE * getMinefieldHeight() + TOPBARHEIGHT + CELLSIZE * 1.6);
+	// The factors 0.34 and 1.56 seems to be a weird quirk with javaFX. Not sure how to fix it yet.
+	stage.setWidth(CELLSIZE * getMinefieldWidth() + CELLSIZE * 0.34);
+	stage.setHeight(CELLSIZE * getMinefieldHeight() + TOPBARHEIGHT + CELLSIZE * 1.56);
     }
    
     public void updateFlagCounter() {

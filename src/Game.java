@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Game {
@@ -34,6 +35,8 @@ public class Game {
 	this.minefieldHeight = minefieldHeight;
 	this.minefieldWidth = minefieldWidth;
 
+	// Added a 1 tile border around the board so that the playable board is
+	// [1, minefieldHeight] x [1, minefieldWidth]
 	this.board = new Tile[this.minefieldHeight + 2][this.minefieldWidth + 2];
 	for (int row = 1; row <= this.minefieldHeight; row++) {
 	    for (int col = 1; col <= this.minefieldWidth; col++) {
@@ -49,16 +52,38 @@ public class Game {
      */
     public void startGame(Tile startTile) {
 	// These tile will be empty since they are around the starting tiles
+	Random rand = new Random(System.currentTimeMillis());
+	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
 	for (Tile tile : startingTiles) {
 	    if (tile != null)
 		tile.setIsStartingTile(true);
 	}
 
+
 	/**
 	 * Places mines all over the board except for cells adjacent to the startTile
 	 **/
-	Random rand = new Random(System.currentTimeMillis());
+	ArrayList<int[]> positions = new ArrayList<int[]>();
+	
+	for (int row = 1; row <= programInstance.getMinefieldHeight(); row++) {
+	    for (int col = 1; col <= programInstance.getMinefieldWidth(); col++) {
+		int[] pos = new int[2];
+		pos[0] = row;
+		pos[1] = col;
+		positions.add(pos);
+	    }
+	}
+
+	ArrayList<int[]> positionsShuffled = new ArrayList<int[]>();
+	for (int index = 0; index < positions.size(); index++) {
+	    int rNum = rand.nextInt(positions.size());
+	    
+	    positionsShuffled.add(positions.get(rNum));
+	    positions.remove(rNum);
+	}
+	
+	
 	for (int mines = 0; mines < programInstance.getNumberMines(); mines++) {
 
 	    // Select a random tile
@@ -67,11 +92,15 @@ public class Game {
 	    Tile randomTile;
 	    
 	    do{
-		randomRow = rand.nextInt(programInstance.getMinefieldHeight()) + 1;
-		randomCol = rand.nextInt(programInstance.getMinefieldWidth()) + 1;
+		int[] pos = positionsShuffled.get(0);
+		positionsShuffled.remove(0);
+		
+		randomRow = pos[0];
+		randomCol = pos[1];
+		
 		randomTile = board[randomRow][randomCol];
 	    }
-	    while (randomTile.getIsMine() || randomTile.getIsStartingTile());
+	    while (randomTile.getIsStartingTile());
 
 	    randomTile.setIsMine(true);
 	}
