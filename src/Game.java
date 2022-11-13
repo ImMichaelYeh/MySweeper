@@ -51,7 +51,9 @@ public class Game {
      * This function gets called after the first cell is clicked.
      */
     public void startGame(Tile startTile) {
-	// These tile will be empty since they are around the starting tiles
+	
+	// Setting the startingTiles
+	// These tiles will be empty since they are around the starting tiles
 	Random rand = new Random(System.currentTimeMillis());
 	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
