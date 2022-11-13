@@ -194,7 +194,7 @@ public class Tile extends StackPane {
 		index++;
 	    }
 	}
-
+	
 	return surroundingTiles;
     }
 

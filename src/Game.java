@@ -52,8 +52,11 @@ public class Game {
      */
     public void startGame(Tile startTile) {
 	
-	// Setting the startingTiles
-	// These tiles will be empty since they are around the starting tiles
+	/** 
+	 * Setting the startingTiles. The startingTiles include the tile that 
+	 * the player clicked on and the 8 adjacent tiles. These tiles will 
+	 * be empty to ensure that you do not lose on the first click.
+	 **/
 	Random rand = new Random(System.currentTimeMillis());
 	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
@@ -65,7 +68,12 @@ public class Game {
 
 
 	/**
-	 * Places mines all over the board except for cells adjacent to the startTile
+	 * Randomly place mines all over the board except for the startingTiles
+	 * 
+	 * Algorithm:
+	 * 1. Generate all possible positions on the board
+	 * 2. Shuffle positions
+	 * 3. Take next position and set as mine until all mines are set
 	 **/
 	ArrayList<int[]> positions = new ArrayList<int[]>();
 	
@@ -110,7 +118,9 @@ public class Game {
 
 	/**
 	 * At this point, all the mine locations are determined so we need to set each
-	 * tile's middle layer
+	 * tile's middle layer.
+	 * 
+	 * The .setMiddle function tells each tile to figure out their own value.
 	 **/
 	for (int row = 1; row <= minefieldHeight; row++) {
 	    for (int col = 1; col <= minefieldWidth; col++) {
