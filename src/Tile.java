@@ -10,8 +10,10 @@ import javafx.scene.layout.StackPane;
 
 public class Tile extends StackPane {
 
-    private static final String NUMBERS[] = { "res/zero.png", "res/one.png", "res/two.png", "res/three.png",
-	    "res/four.png", "res/five.png", "res/six.png", "res/seven.png", "res/eight.png" };
+    private static final String NUMBERS[] = { 
+	    "res/zero.png", "res/one.png", "res/two.png", 
+	    "res/three.png", "res/four.png", "res/five.png", 
+	    "res/six.png", "res/seven.png", "res/eight.png" };
 
     private static final String FLAG = "res/flag.png";
     private static final String BADFLAG = "res/badflag.png";
@@ -196,7 +198,7 @@ public class Tile extends StackPane {
 		index++;
 	    }
 	}
-
+	
 	return surroundingTiles;
     }
 

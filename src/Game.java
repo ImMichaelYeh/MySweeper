@@ -52,18 +52,29 @@ public class Game {
      * This function gets called after the first cell is clicked.
      */
     public void startGame(Tile startTile) {
-	// These tile will be empty since they are around the starting tiles
+	
+	/** 
+	 * Setting the startingTiles. The startingTiles include the tile that 
+	 * the player clicked on and the 8 adjacent tiles. These tiles will 
+	 * be empty to ensure that you do not lose on the first click.
+	 **/
 	Random rand = new Random(System.currentTimeMillis());
 	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
 	for (Tile tile : startingTiles) {
-	    if (tile != null)
+	    if (tile != null) {
 		tile.setIsStartingTile(true);
+	    }
 	}
 
 
 	/**
-	 * Places mines all over the board except for cells adjacent to the startTile
+	 * Randomly place mines all over the board except for the startingTiles
+	 * 
+	 * Algorithm:
+	 * 1. Generate all possible positions on the board
+	 * 2. Shuffle positions
+	 * 3. Take next position and set as mine until all mines are set
 	 **/
 	ArrayList<int[]> positions = new ArrayList<int[]>();
 	
@@ -108,7 +119,9 @@ public class Game {
 
 	/**
 	 * At this point, all the mine locations are determined so we need to set each
-	 * tile's middle layer
+	 * tile's middle layer.
+	 * 
+	 * The .setMiddle function tells each tile to figure out their own value.
 	 **/
 	for (int row = 1; row <= minefieldHeight; row++) {
 	    for (int col = 1; col <= minefieldWidth; col++) {
@@ -142,6 +155,7 @@ public class Game {
 		    if (board[row][col].getIsMine() && !board[row][col].getIsFlagged()) {
 			board[row][col].getTileButton().setVisible(false);
 		    }
+		    
 		    if (!board[row][col].getIsMine() && board[row][col].getIsFlagged()) {
 			board[row][col].setMiddleBadFlag();
 			board[row][col].getTileButton().setVisible(false);
@@ -166,8 +180,9 @@ public class Game {
 
     public String getFlagsRemaining() {
 	String remaining = Integer.toString(flagsRemaining);
-	while (remaining.length() < 3)
+	while (remaining.length() < 3) {
 	    remaining = "0" + remaining;
+	}
 	return remaining;
     }
 
@@ -231,8 +246,10 @@ public class Game {
 	    while (!getIsGameOver()) {
 		deltaTime = System.currentTimeMillis() - startTime;
 		deltaTimeSeconds = deltaTime / 1000;
-		if (deltaTimeSeconds <= 999) // max time to prevent formatting issues
+		
+		if (deltaTimeSeconds <= 999) {// max time to prevent formatting issues
 		    programInstance.setTimerText(deltaTimeSeconds);
+		}
 	    }
 	}
     }
