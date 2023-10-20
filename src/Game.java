@@ -51,7 +51,6 @@ public class Game {
      * This function gets called after the first cell is clicked.
      */
     public void startGame(Tile startTile) {
-	
 	/** 
 	 * Setting the startingTiles. The startingTiles include the tile that 
 	 * the player clicked on and the 8 adjacent tiles. These tiles will 
@@ -65,7 +64,6 @@ public class Game {
 		tile.setIsStartingTile(true);
 	    }
 	}
-
 
 	/**
 	 * Randomly place mines all over the board except for the startingTiles
@@ -140,8 +138,8 @@ public class Game {
 	    programInstance.setFaceToSunglasses();
 	    for (int row = 1; row <= minefieldHeight; row++) {
 		for (int col = 1; col <= minefieldWidth; col++) {
-		    if (board[row][col].getIsMine()) {
-			board[row][col].getTileButton().setVisible(true);
+		    if (!board[row][col].getIsMine()) {
+			board[row][col].getTileButton().setVisible(false);
 		    }
 		}
 	    }
