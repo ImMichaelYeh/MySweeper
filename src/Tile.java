@@ -1,6 +1,9 @@
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+
+import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -11,7 +14,7 @@ public class Tile extends StackPane {
 	    "res/zero.png", "res/one.png", "res/two.png", 
 	    "res/three.png", "res/four.png", "res/five.png", 
 	    "res/six.png", "res/seven.png", "res/eight.png" };
-    
+
     private static final String FLAG = "res/flag.png";
     private static final String BADFLAG = "res/badflag.png";
     private static final String MINE = "res/mine.png";
@@ -39,7 +42,7 @@ public class Tile extends StackPane {
 	this.gameInstance = gameInstance;
 	this.row = row;
 	this.col = col;
-	
+
 	numberMinesSurrounding = 0;
 	isFlagged = false;
 	isMine = false;
@@ -49,7 +52,7 @@ public class Tile extends StackPane {
 	stackPane = new StackPane();
 	tileButton = new Button();
 	tileButton.setOnMousePressed(new ButtonPressedListener(programInstance, gameInstance, this));
-	tileButton.setOnMouseReleased(new ButtonReleasedListener(programInstance, gameInstance, this));
+	tileButton.setOnMouseReleased(new ButtonReleasedListener(programInstance, gameInstance));
 
 	middle = new ImageView(NUMBERS[0]);
 	background = new ImageView(BORDEREDBACKGROUND);
@@ -57,6 +60,7 @@ public class Tile extends StackPane {
 	stackPane.getChildren().add(middle);
 	stackPane.getChildren().add(tileButton);
 	setSize(programInstance.getCellSize());
+
     }
 
     public void setSize(int width) {
@@ -80,7 +84,7 @@ public class Tile extends StackPane {
      */
     private void click() {
 	if (!gameInstance.getIsGameOver()) {
-	    tileButton.setVisible(false);
+	    gameInstance.getTilesToReveal().add(this);
 	    setIsRevealed(true);
 
 	    if (!getIsMine()) {
@@ -219,6 +223,15 @@ public class Tile extends StackPane {
 	public void handle(MouseEvent event) {
 	    if (event.getButton() == MouseButton.PRIMARY && !gameInstance.getIsGameOver()) {
 		setFaceToShocked();
+
+		if (!parentTile.getIsFlagged() && !gameInstance.getIsGameStarted()) {
+		    gameInstance.startGame(parentTile);
+		}
+
+		if (!parentTile.getIsFlagged()) {
+		    click();
+		}
+
 	    }
 	    // RIGHT CLICK (Setting flags)
 	    if (event.getButton() == MouseButton.SECONDARY) {
@@ -256,27 +269,24 @@ public class Tile extends StackPane {
 
 	private Program programInstance;
 	private Game gameInstance;
-	private Tile parentTile;
 
-	public ButtonReleasedListener(Program programInstance, Game gameInstance, Tile parentTile) {
+	public ButtonReleasedListener(Program programInstance, Game gameInstance) {
 	    this.programInstance = programInstance;
 	    this.gameInstance = gameInstance;
-	    this.parentTile = parentTile;
 	}
 
 	@Override
 	public void handle(MouseEvent event) {
 	    if (event.getButton() == MouseButton.PRIMARY) {
-		if (!parentTile.getIsFlagged() && !gameInstance.getIsGameStarted()) {
-		    gameInstance.startGame(parentTile);
-		}
-
-		if (!parentTile.getIsFlagged()) {
-		    click();
-		}
 
 		if (!gameInstance.getIsGameOver()) {
 		    setFaceToSmile();
+
+		    for (int i = 0; i < gameInstance.getTilesToReveal().size(); i++) {
+			gameInstance.getTilesToReveal().get(i).tileButton.setVisible(false);
+		    }
+
+		    gameInstance.setTilesToReveal(new ArrayList<Tile>());
 		}
 	    }
 

@@ -11,7 +11,7 @@ public class Game {
     private boolean isGameStarted;
     private boolean isGameOver;
     private int safeCellsRemaining;
-
+    private ArrayList<Tile> tilesToReveal;
     /**
      * The actually board width and height have padding so that we can perform
      * certain actions easier without over indexing on the array
@@ -31,6 +31,7 @@ public class Game {
 	this.isGameStarted = false;
 	this.isGameOver = false;
 	this.safeCellsRemaining = minefieldHeight * minefieldWidth - mines;
+	this.tilesToReveal = new ArrayList<Tile>();
 
 	this.minefieldHeight = minefieldHeight;
 	this.minefieldWidth = minefieldWidth;
@@ -201,6 +202,14 @@ public class Game {
 	return this.safeCellsRemaining;
     }
 
+    public ArrayList<Tile> getTilesToReveal() {
+	return this.tilesToReveal;
+    }
+    
+    public void setTilesToReveal(ArrayList<Tile> tilesToReveal) {
+	this.tilesToReveal = tilesToReveal;
+    }
+    
     public void setFlagsRemaining(int flagsRemaining) {
 	this.flagsRemaining = flagsRemaining;
     }
