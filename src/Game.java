@@ -12,6 +12,8 @@ public class Game {
     private boolean isGameOver;
     private int safeCellsRemaining;
     private ArrayList<Tile> tilesToReveal;
+    private ArrayList<int[]> availableMinePositions = new ArrayList<int[]>();
+    private ArrayList<Tile> allTileReferences = new ArrayList<Tile>();
     /**
      * The actually board width and height have padding so that we can perform
      * certain actions easier without over indexing on the array
@@ -32,6 +34,7 @@ public class Game {
 	this.isGameOver = false;
 	this.safeCellsRemaining = minefieldHeight * minefieldWidth - mines;
 	this.tilesToReveal = new ArrayList<Tile>();
+	this.availableMinePositions = new ArrayList<int[]>();
 
 	this.minefieldHeight = minefieldHeight;
 	this.minefieldWidth = minefieldWidth;
@@ -41,8 +44,43 @@ public class Game {
 	this.board = new Tile[this.minefieldHeight + 2][this.minefieldWidth + 2];
 	for (int row = 1; row <= this.minefieldHeight; row++) {
 	    for (int col = 1; col <= this.minefieldWidth; col++) {
-		board[row][col] = new Tile(programInstance, this, row, col);
+		Tile tile = new Tile(programInstance, this, row, col);
+		board[row][col] = tile;
+		allTileReferences.add(tile);
 	    }
+	}
+	
+	// Creates all possible positions
+	for (int row = 1; row <= programInstance.getMinefieldHeight(); row++) {
+	    for (int col = 1; col <= programInstance.getMinefieldWidth(); col++) {
+		int[] pos = new int[2];
+		pos[0] = row;
+		pos[1] = col;
+		availableMinePositions.add(pos);
+	    }
+	}
+
+	// Randomize positions
+	Random rand = new Random(System.currentTimeMillis());
+	ArrayList<int[]> positionsShuffled = new ArrayList<int[]>();
+	for (int index = 0; index < availableMinePositions.size(); index++) {
+	    int rNum = rand.nextInt(availableMinePositions.size());
+	    
+	    positionsShuffled.add(availableMinePositions.get(rNum));
+	    availableMinePositions.remove(rNum);
+	}
+	availableMinePositions = positionsShuffled;
+	
+	// Place mines randomly around the board
+	for (int counter = 0; counter < programInstance.getNumberMines(); counter++) {
+	    // Select a random tile
+	    int[] pos = availableMinePositions.get(0);
+	    availableMinePositions.remove(0);
+		
+	    int randomRow = pos[0];
+	    int randomCol = pos[1];
+		
+	    board[randomRow][randomCol].setIsMine(true);
 	}
 
 	this.timerThread = new TimerThread(programInstance);
@@ -57,79 +95,27 @@ public class Game {
 	 * the player clicked on and the 8 adjacent tiles. These tiles will 
 	 * be empty to ensure that you do not lose on the first click.
 	 **/
-	Random rand = new Random(System.currentTimeMillis());
-	
 	Tile[] startingTiles = startTile.getSurroundingTiles();
 	for (Tile tile : startingTiles) {
-	    if (tile != null) {
+	    if (tile != null && tile.getIsMine()) {
 		tile.setIsStartingTile(true);
-	    }
-	}
-
-	/**
-	 * Randomly place mines all over the board except for the startingTiles
-	 * 
-	 * Algorithm:
-	 * 1. Generate all possible positions on the board
-	 * 2. Shuffle positions
-	 * 3. Take next position and set as mine until all mines are set
-	 **/
-	ArrayList<int[]> positions = new ArrayList<int[]>();
-	
-	for (int row = 1; row <= programInstance.getMinefieldHeight(); row++) {
-	    for (int col = 1; col <= programInstance.getMinefieldWidth(); col++) {
-		int[] pos = new int[2];
-		pos[0] = row;
-		pos[1] = col;
-		positions.add(pos);
-	    }
-	}
-
-	ArrayList<int[]> positionsShuffled = new ArrayList<int[]>();
-	for (int index = 0; index < positions.size(); index++) {
-	    int rNum = rand.nextInt(positions.size());
-	    
-	    positionsShuffled.add(positions.get(rNum));
-	    positions.remove(rNum);
-	}
-	
-	
-	for (int mines = 0; mines < programInstance.getNumberMines(); mines++) {
-
-	    // Select a random tile
-	    int randomRow; 
-	    int randomCol;
-	    Tile randomTile;
-	    
-	    do{
-		int[] pos = positionsShuffled.get(0);
-		positionsShuffled.remove(0);
+		tile.setIsMine(false);
 		
-		randomRow = pos[0];
-		randomCol = pos[1];
+		int[] randomPos = availableMinePositions.get(0);
+		availableMinePositions.remove(0);
 		
-		randomTile = board[randomRow][randomCol];
-	    }
-	    while (randomTile.getIsStartingTile());
-
-	    randomTile.setIsMine(true);
-	}
-
-	/**
-	 * At this point, all the mine locations are determined so we need to set each
-	 * tile's middle layer.
-	 * 
-	 * The .setMiddle function tells each tile to figure out their own value.
-	 **/
-	for (int row = 1; row <= minefieldHeight; row++) {
-	    for (int col = 1; col <= minefieldWidth; col++) {
-		board[row][col].setMiddle();
+		Tile newTile = board[randomPos[0]][randomPos[1]];
+		newTile.setIsMine(true);
 	    }
 	}
 
 	isGameStarted = true;
 	timerThread = new TimerThread(programInstance);
 	timerThread.start();
+	
+	for (Tile tile : allTileReferences) {
+	    tile.setMiddle();
+	}
     }
 
     public void gameOver(boolean win) {
