@@ -90,7 +90,7 @@ public class Tile extends StackPane {
 	    if (!getIsMine()) {
 		if (numberMinesSurrounding == 0) {
 		    for (Tile t : getSurroundingTiles()) {
-			if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed()) {
+			if (t != null && t != this && !t.getIsFlagged() && !t.getIsRevealed() && !t.getIsMine()) {
 			    t.click();
 			}
 		    }
