@@ -1,0 +1,4 @@
+:root { font-family: Inter, system-ui, sans-serif; color: #1e293b; background: #f8fafc; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, select { border-radius: .35rem; border: 1px solid #94a3b8; }

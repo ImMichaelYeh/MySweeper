@@ -1,1 +1,4 @@
 /bin/
+/target/
+/frontend/node_modules/
+/frontend/dist/
